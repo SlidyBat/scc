@@ -17,7 +17,7 @@ Online documentation is available at: [https://scc.binary.ninja/](https://scc.bi
 The build system uses cmake:
 
 ```
-$ git clone https://github.com/vector35/scc
+$ git clone --recursive https://github.com/vector35/scc
 $ cd scc
 $ cmake -S . -B build
 ...
