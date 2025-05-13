@@ -23,7 +23,7 @@ if(UNIX)
 		PROPERTIES COMPILE_FLAGS "-Wno-unused-function -Wno-deprecated-register")
 endif()
 
-add_executable(codegen ${CODEGEN_SOURCES}
+add_executable(scc_codegen ${CODEGEN_SOURCES}
 	${INTERMEDIATE}/codegen/PreprocessLexer.cpp
 	${INTERMEDIATE}/codegen/PreprocessLexer.h
 	${INTERMEDIATE}/codegen/PreprocessParser.cpp
@@ -55,9 +55,9 @@ add_custom_command(OUTPUT ${INTERMEDIATE}/codegen/CodegenParser.cpp ${INTERMEDIA
 	DEPENDS ${PROJECT_SOURCE_DIR}/codegen/Codegen.y
 	COMMAND bison ${BISON_FLAGS} --name-prefix=Codegen_ -o ${INTERMEDIATE}/codegen/CodegenParser.cpp --defines=${INTERMEDIATE}/codegen/CodegenParser.h ${PROJECT_SOURCE_DIR}/codegen/Codegen.y)
 
-target_include_directories(codegen PRIVATE ${INTERMEDIATE}/codegen ${PROJECT_SOURCE_DIR}/codegen)
+target_include_directories(scc_codegen PRIVATE ${INTERMEDIATE}/codegen ${PROJECT_SOURCE_DIR}/codegen)
 
-set_target_properties(codegen PROPERTIES
+set_target_properties(scc_codegen PROPERTIES
     CXX_STANDARD 11
 	CXX_STANDARD_REQUIRED ON
 	BUILD_WITH_INSTALL_RPATH OFF
@@ -138,20 +138,20 @@ add_custom_command(OUTPUT ${INTERMEDIATE}/CodeParser.cpp ${INTERMEDIATE}/CodePar
 	COMMAND bison ${BISON_FLAGS} --name-prefix=Code_ -o ${INTERMEDIATE}/CodeParser.cpp --defines=${INTERMEDIATE}/CodeParser.h ${PROJECT_SOURCE_DIR}/Code.y)
 
 add_custom_command(OUTPUT ${INTERMEDIATE}/PpcCodeGen.cpp
-	DEPENDS codegen ${PROJECT_SOURCE_DIR}/Ppc.cgen
-	COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS=detect_leaks=0 $<TARGET_FILE:codegen> -o ${INTERMEDIATE}/PpcCodeGen.cpp ${PROJECT_SOURCE_DIR}/Ppc.cgen)
+	DEPENDS scc_codegen ${PROJECT_SOURCE_DIR}/Ppc.cgen
+	COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS=detect_leaks=0 $<TARGET_FILE:scc_codegen> -o ${INTERMEDIATE}/PpcCodeGen.cpp ${PROJECT_SOURCE_DIR}/Ppc.cgen)
 add_custom_command(OUTPUT ${INTERMEDIATE}/AArch64CodeGen.cpp
-	DEPENDS codegen ${PROJECT_SOURCE_DIR}/AArch64.cgen
-	COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS=detect_leaks=0 $<TARGET_FILE:codegen> -o ${INTERMEDIATE}/AArch64CodeGen.cpp ${PROJECT_SOURCE_DIR}/AArch64.cgen)
+	DEPENDS scc_codegen ${PROJECT_SOURCE_DIR}/AArch64.cgen
+	COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS=detect_leaks=0 $<TARGET_FILE:scc_codegen> -o ${INTERMEDIATE}/AArch64CodeGen.cpp ${PROJECT_SOURCE_DIR}/AArch64.cgen)
 add_custom_command(OUTPUT ${INTERMEDIATE}/ArmCodeGen.cpp
-	DEPENDS codegen ${PROJECT_SOURCE_DIR}/Arm.cgen
-	COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS=detect_leaks=0 $<TARGET_FILE:codegen> -o ${INTERMEDIATE}/ArmCodeGen.cpp ${PROJECT_SOURCE_DIR}/Arm.cgen)
+	DEPENDS scc_codegen ${PROJECT_SOURCE_DIR}/Arm.cgen
+	COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS=detect_leaks=0 $<TARGET_FILE:scc_codegen> -o ${INTERMEDIATE}/ArmCodeGen.cpp ${PROJECT_SOURCE_DIR}/Arm.cgen)
 add_custom_command(OUTPUT ${INTERMEDIATE}/QuarkCodeGen.cpp
-	DEPENDS codegen ${PROJECT_SOURCE_DIR}/Quark.cgen
-	COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS=detect_leaks=0 $<TARGET_FILE:codegen> -o ${INTERMEDIATE}/QuarkCodeGen.cpp ${PROJECT_SOURCE_DIR}/Quark.cgen)
+	DEPENDS scc_codegen ${PROJECT_SOURCE_DIR}/Quark.cgen
+	COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS=detect_leaks=0 $<TARGET_FILE:scc_codegen> -o ${INTERMEDIATE}/QuarkCodeGen.cpp ${PROJECT_SOURCE_DIR}/Quark.cgen)
 add_custom_command(OUTPUT ${INTERMEDIATE}/MipsCodeGen.cpp
-	DEPENDS codegen ${PROJECT_SOURCE_DIR}/Mips.cgen
-	COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS=detect_leaks=0 $<TARGET_FILE:codegen> -o ${INTERMEDIATE}/MipsCodeGen.cpp ${PROJECT_SOURCE_DIR}/Mips.cgen)
+	DEPENDS scc_codegen ${PROJECT_SOURCE_DIR}/Mips.cgen
+	COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS=detect_leaks=0 $<TARGET_FILE:scc_codegen> -o ${INTERMEDIATE}/MipsCodeGen.cpp ${PROJECT_SOURCE_DIR}/Mips.cgen)
 
 target_include_directories(scc_common PRIVATE ${INTERMEDIATE} ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/asmx86)
 target_compile_definitions(scc_common PRIVATE RELEASE)
