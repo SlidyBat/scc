@@ -4,6 +4,7 @@ project(scc)
 
 set(INTERMEDIATE ${PROJECT_BINARY_DIR}/Obj)
 file(MAKE_DIRECTORY ${INTERMEDIATE})
+file(MAKE_DIRECTORY ${INTERMEDIATE}/asmx86)
 file(MAKE_DIRECTORY ${INTERMEDIATE}/codegen)
 
 file(GLOB CODEGEN_SOURCES
@@ -95,9 +96,9 @@ set_target_properties(makeopstr PROPERTIES
 	BUILD_WITH_INSTALL_RPATH OFF
 	RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR})
 
-add_custom_command(OUTPUT ${PROJECT_SOURCE_DIR}/asmx86/asmx86str.h
+add_custom_command(OUTPUT ${INTERMEDIATE}/asmx86/asmx86str.h
 	DEPENDS ${PROJECT_SOURCE_DIR}/asmx86/asmx86.h $<TARGET_FILE:makeopstr>
-	COMMAND $<TARGET_FILE:makeopstr> ${PROJECT_SOURCE_DIR}/asmx86/asmx86.h ${PROJECT_SOURCE_DIR}/asmx86/asmx86str.h
+	COMMAND $<TARGET_FILE:makeopstr> ${PROJECT_SOURCE_DIR}/asmx86/asmx86.h ${INTERMEDIATE}/asmx86/asmx86str.h
 )
 
 if(UNIX)
@@ -122,7 +123,7 @@ add_library(scc_common ${COMPILER_SOURCES}
 	${INTERMEDIATE}/QuarkCodeGen.cpp
 	${INTERMEDIATE}/MipsCodeGen.cpp
 	${INTERMEDIATE}/Version.cpp
-	${PROJECT_SOURCE_DIR}/asmx86/asmx86str.h)
+	${INTERMEDIATE}/asmx86/asmx86str.h)
 
 add_custom_command(OUTPUT ${INTERMEDIATE}/PreprocessLexer.cpp ${INTERMEDIATE}/PreprocessLexer.h
 	DEPENDS ${PROJECT_SOURCE_DIR}/Preprocess.lex ${INTERMEDIATE}/PreprocessParser.h
@@ -153,7 +154,7 @@ add_custom_command(OUTPUT ${INTERMEDIATE}/MipsCodeGen.cpp
 	DEPENDS scc_codegen ${PROJECT_SOURCE_DIR}/Mips.cgen
 	COMMAND ${CMAKE_COMMAND} -E env ASAN_OPTIONS=detect_leaks=0 $<TARGET_FILE:scc_codegen> -o ${INTERMEDIATE}/MipsCodeGen.cpp ${PROJECT_SOURCE_DIR}/Mips.cgen)
 
-target_include_directories(scc_common PRIVATE ${INTERMEDIATE} ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/asmx86)
+target_include_directories(scc_common PRIVATE ${INTERMEDIATE} ${PROJECT_SOURCE_DIR} ${PROJECT_SOURCE_DIR}/asmx86 ${INTERMEDIATE}/asmx86)
 target_compile_definitions(scc_common PRIVATE RELEASE)
 
 set_target_properties(scc_common PROPERTIES
