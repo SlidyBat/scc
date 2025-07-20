@@ -586,6 +586,9 @@ Expr* ParserState::ResolveIdentifierExpr(const string& name)
 	if (i != m_functions.end())
 		return FunctionExpr(i->second);
 
+	if (IsEnumMember(name))
+		return IntExpr(GetEnumMemberValue(name));
+
 	Error();
 	fprintf(stderr, "%s:%d: error: identifier '%s' not defined\n", GetFileName().c_str(), GetLineNumber(), name.c_str());
 	return IntExpr(0);
