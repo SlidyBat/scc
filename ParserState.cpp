@@ -427,6 +427,38 @@ Expr* ParserState::DeclareVariable(Type* type, const VarInitInfo& info, bool isS
 
 	if (!info.initialized)
 		return new Expr(info.location, EXPR_SEQUENCE);
+
+	// If this is a constant int array value, just write it as the initial data for the variable and skip the runtime init
+	if (var->IsGlobal() && info.array && type->GetChildType()->GetClass() == TYPE_INT)
+	{
+		if (info.value->GetClass() == EXPR_INITIALIZER &&
+			type->GetClass() == TYPE_ARRAY &&
+			type->GetChildType()->GetClass() == TYPE_INT)
+		{
+			for (auto& expr : info.value->GetChildren())
+			{
+				int64_t val = expr->ComputeIntegerValue(this);
+				switch (var->GetType()->GetChildType()->GetWidth())
+				{
+					case 1:
+						var->GetData().WriteInt8(val);
+						break;
+					case 2:
+						var->GetData().WriteInt16(val);
+						break;
+					case 4:
+						var->GetData().WriteInt32(val);
+						break;
+					case 8:
+						var->GetData().WriteInt64(val);
+						break;
+				}
+			}
+
+			return new Expr(info.location, EXPR_SEQUENCE);
+		}
+	}
+
 	return Expr::BinaryExpr(info.location, EXPR_INIT_ASSIGN, Expr::VariableExpr(info.location, var), info.value);
 }
 
