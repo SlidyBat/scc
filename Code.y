@@ -1201,7 +1201,15 @@ enum_member_list:	enum_member_list COMMA enum_member
 		;
 
 enum_member:	ID  { $$ = new EnumMember; $$->name = $1; $$->isDefault = true; free($1); }
-	|	ID ASSIGN INT_VAL  { $$ = new EnumMember; $$->name = $1; $$->isDefault = false; $$->value = $3; free($1); }
+	|	ID ASSIGN expression 
+		{
+			$$ = new EnumMember;
+			$$->name = $1;
+			$$->isDefault = false;
+			$$->value = $3->ComputeIntegerValue(state);
+			$3->Release();
+			free($1);
+		}
 	;
 
 stmt_list:	stmt_list_nonempty
