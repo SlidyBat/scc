@@ -1183,7 +1183,7 @@ enum_member_list:	enum_member_list COMMA enum_member
 			{
 				$$ = $1;
 				Enum* e = $1->GetEnum();
-				uint32_t value = $3->isDefault ? e->GetNextValue() : $3->value;
+				int64_t value = $3->isDefault ? e->GetNextValue() : $3->value;
 				e->AddMember($3->name, value);
 				state->AddEnumMember($3->name, value);
 				delete $3;
@@ -1191,7 +1191,7 @@ enum_member_list:	enum_member_list COMMA enum_member
 		|	enum_member
 			{
 				Enum* e = new Enum();
-				uint32_t value = $1->isDefault ? e->GetNextValue() : $1->value;
+				int64_t value = $1->isDefault ? e->GetNextValue() : $1->value;
 				e->AddMember($1->name, value);
 				state->AddEnumMember($1->name, value);
 				$$ = Type::EnumType(e);

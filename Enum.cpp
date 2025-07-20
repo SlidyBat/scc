@@ -47,7 +47,7 @@ void Enum::ReplaceWith(Enum* e)
 }
 
 
-void Enum::AddMember(const string& name, uint32_t value)
+void Enum::AddMember(const string& name, int64_t value)
 {
 	EnumMember member;
 	member.name = name;
@@ -114,7 +114,7 @@ Enum* Enum::Deserialize(InputBlock* input)
 
 		if (!input->ReadString(member.name))
 			return NULL;
-		if (!input->ReadUInt32(member.value))
+		if (!input->ReadInt64(member.value))
 			return NULL;
 
 		result->m_members.push_back(member);

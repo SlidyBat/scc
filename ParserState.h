@@ -47,7 +47,7 @@ class ParserState
 	std::map< std::string, Ref<Type> > m_structTypes;
 	std::map< std::string, Ref<Type> > m_unionTypes;
 	std::map< std::string, Ref<Type> > m_enumTypes;
-	std::map<std::string, uint32_t> m_enumMembers;
+	std::map<std::string, int64_t> m_enumMembers;
 
 	Ref<Expr> m_initExpression;
 	std::map< std::string, Ref<Function> > m_functions;
@@ -98,9 +98,9 @@ public:
 	Type* GetUnionType(const std::string& name);
 	Type* GetEnumType(const std::string& name);
 
-	void AddEnumMember(const std::string& name, uint32_t value);
+	void AddEnumMember(const std::string& name, int64_t value);
 	bool IsEnumMember(const std::string& name) { return m_enumMembers.find(name) != m_enumMembers.end(); }
-	uint32_t GetEnumMemberValue(const std::string& name);
+	int64_t GetEnumMemberValue(const std::string& name);
 
 	void BeginFunctionScope(const FunctionInfo& func);
 	void PushScope();

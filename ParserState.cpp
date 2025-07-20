@@ -335,7 +335,7 @@ Type* ParserState::GetEnumType(const string& name)
 }
 
 
-void ParserState::AddEnumMember(const string& name, uint32_t value)
+void ParserState::AddEnumMember(const string& name, int64_t value)
 {
 	if (m_enumMembers.find(name) != m_enumMembers.end())
 	{
@@ -348,9 +348,9 @@ void ParserState::AddEnumMember(const string& name, uint32_t value)
 }
 
 
-uint32_t ParserState::GetEnumMemberValue(const string& name)
+int64_t ParserState::GetEnumMemberValue(const string& name)
 {
-	map<string, uint32_t>::const_iterator i = m_enumMembers.find(name);
+	map<string, int64_t>::const_iterator i = m_enumMembers.find(name);
 	if (i == m_enumMembers.end())
 	{
 		Error();
@@ -735,7 +735,7 @@ void ParserState::Serialize(OutputBlock* output)
 	}
 
 	output->WriteInteger(m_enumMembers.size());
-	for (map<string, uint32_t>::iterator i = m_enumMembers.begin(); i != m_enumMembers.end(); i++)
+	for (map<string, uint64_t>::iterator i = m_enumMembers.begin(); i != m_enumMembers.end(); i++)
 	{
 		output->WriteString(i->first);
 		output->WriteInteger(i->second);
@@ -825,8 +825,8 @@ bool ParserState::Deserialize(InputBlock* input)
 		if (!input->ReadString(name))
 			return false;
 
-		uint32_t value;
-		if (!input->ReadUInt32(value))
+		int64_t value;
+		if (!input->ReadInt64(value))
 			return false;
 
 		m_enumMembers[name] = value;

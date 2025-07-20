@@ -11,7 +11,7 @@
 struct EnumMember
 {
 	std::string name;
-	uint32_t value;
+	int64_t value;
 	bool isDefault;
 };
 
@@ -25,7 +25,7 @@ class Enum: public RefCountObject
 {
 	std::string m_name;
 	std::vector<EnumMember> m_members;
-	uint32_t m_nextValue;
+	int64_t m_nextValue;
 	bool m_fullyDefined;
 
 	size_t m_serializationIndex;
@@ -47,9 +47,9 @@ public:
 	const std::string& GetName() const { return m_name; }
 
 	const std::vector<EnumMember>& GetMembers() const { return m_members; }
-	uint32_t GetNextValue() const { return m_nextValue; }
+	int64_t GetNextValue() const { return m_nextValue; }
 
-	void AddMember(const std::string& name, uint32_t value);
+	void AddMember(const std::string& name, int64_t value);
 
 	void Serialize(OutputBlock* output);
 	static Enum* Deserialize(InputBlock* input);
