@@ -226,7 +226,10 @@ Type* Expr::ComputeType(ParserState* state, Function* func)
 		m_type = m_children[0]->GetType()->GetChildType()->GetStruct()->GetMember(state, m_stringValue).type;
 		break;
 	case EXPR_ADDRESS_OF:
-		m_type = Type::PointerType(m_children[0]->GetType(), 1);
+		if (m_children[0]->GetType()->GetClass() == TYPE_ARRAY)
+			m_type = Type::PointerType(m_children[0]->GetType()->GetChildType(), 1);
+		else
+			m_type = Type::PointerType(m_children[0]->GetType(), 1);
 		break;
 	case EXPR_DEREF:
 		if ((m_children[0]->GetType()->GetClass() != TYPE_POINTER) && (m_children[0]->GetType()->GetClass() != TYPE_ARRAY))
@@ -2209,6 +2212,14 @@ ILParameter Expr::GenerateIL(ParserState* state, Function* func, ILBlock*& block
 		}
 		break;
 	case EXPR_ADDRESS_OF:
+		// Address of an array is just the array
+		if (m_children[0]->GetClass() == EXPR_VARIABLE &&
+			m_children[0]->GetType()->GetClass() == TYPE_ARRAY)
+		{
+			result = m_children[0]->GenerateIL(state, func, block);
+			break;
+		}
+
 		result = func->CreateTempVariable(m_type);
 		if (m_children[0]->GetClass() == EXPR_ARRAY_INDEX)
 		{
